@@ -26,16 +26,33 @@ namespace Multas.Controllers
             return View(listaAgentes);
         }
 
+
+
+
         // GET: Agentes/Details/5
+        /// <summary>
+        /// Mostra os dados de um Agente
+        /// </summary>
+        /// <param name="id">identifica o Agente</param>
+        /// <returns>devolve a View com os dados</returns>
         public ActionResult Details(int? id){
             if (id == null){
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                //vamos alterar esta resposta por defeito
+                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                //
+                //este erro ocorre porque o utilizador anda a fazer asneiras
+                return RedirectToAction("Index");
             }
             // SELECT * FROM Agentes WHERE Id=id
             Agentes agentes = db.Agentes.Find(id);
+
+            //O Agente foi encontrado?
             if (agentes == null)
             {
-                return HttpNotFound();
+
+                //O Agente não foi encontrado, porque o utilizador está 'à pesca'
+                //return HttpNotFound();
+                return RedirectToAction("Index");
             }
             return View(agentes);
         }
@@ -67,12 +84,22 @@ namespace Multas.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                //vamos alterar esta resposta por defeito
+                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                //
+                //este erro ocorre porque o utilizador anda a fazer asneiras
+                return RedirectToAction("Index");
             }
+            // SELECT * FROM Agentes WHERE Id=id
             Agentes agentes = db.Agentes.Find(id);
+
+            //O Agente foi encontrado?
             if (agentes == null)
             {
-                return HttpNotFound();
+
+                //O Agente não foi encontrado, porque o utilizador está 'à pesca'
+                //return HttpNotFound();
+                return RedirectToAction("Index");
             }
             return View(agentes);
         }
@@ -104,17 +131,67 @@ namespace Multas.Controllers
             {
                 return HttpNotFound();
             }
+
+            // O Agente foi encontrado 
+            // vou salvaguardar os dados para posterior validação
+            // - guardar o ID do Agente num Cookie cifrado
+            // - guardar o ID numa variavel de sessão (se se usar o ASP . NET Core, esta ferramenta já não existe...)
+            // - outras alternativas válidas...
+            Session["Agente"] = agentes.ID;
+            //mostra na View os dados do Agente
             return View(agentes);
         }
 
         // POST: Agentes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int? id)
         {
+
+            if(id == null)
+            {
+                //há um 'xico esperto' a tentar dar-me a volta ao código
+                return RedirectToAction("Index");
+            }
+
+            //o ID não é null
+            //será o ID o que eu espero?
+            // vamos validar se o ID está correto
+            if (id != (int)Session["Agente"])
+            {
+                // há aqui outro espertinho...
+                return RedirectToAction("Index");
+            }
+
+            //procura o agente a remover
             Agentes agentes = db.Agentes.Find(id);
-            db.Agentes.Remove(agentes);
-            db.SaveChanges();
+            if (agentes == null)
+            {
+                //nao foi encontrado o agente
+                return RedirectToAction("Index");
+            }
+
+            try
+            {
+               
+                //dá ordem de remoção do Agente
+                db.Agentes.Remove(agentes);
+                //consolida a remoção
+                db.SaveChanges();
+
+            }
+            catch (Exception)
+            {
+                //devem aqui ser escritas todas as instruções que são consideradas necessarias
+
+                //informar que houve um erro
+                ModelState.AddModelError("", "Não é possivel remover o Agente "+agentes.Nome+". Provavelmente, tem multas associadas a ele...");
+
+                //redirecionar para a pagina onde o erro foi gerado
+                return View(agentes);
+            }
+            
+
             return RedirectToAction("Index");
         }
 
