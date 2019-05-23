@@ -104,13 +104,14 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-	<Content Include="imagens\AndreSilveira.jpg" />
+    <Content Include="imagens\AndreSilveira.jpg" />
     <Content Include="imagens\AntonioRocha.jpg" />
     <Content Include="imagens\AugustoCarvalho.jpg" />
     <Content Include="imagens\BeatrizPinto.jpg" />
     <Content Include="imagens\ClaudiaPinto.jpg" />
     <Content Include="imagens\JoseAlves.jpg" />
     <Content Include="imagens\LurdesVieira.jpg" />
+    <Content Include="imagens\nouser.png" />
     <Content Include="imagens\PauloVieira.jpg" />
     <Content Include="imagens\RuiVieira.jpg" />
     <Content Include="imagens\TaniaVieira.jpg" />
@@ -172,7 +173,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>2035</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
