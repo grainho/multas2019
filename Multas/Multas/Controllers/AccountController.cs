@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace Multas.Controllers
 {
-    [Authorize]
+    [Authorize] // todos os utilizadores devem estar AUTENTICADOS 
     public class AccountController : Controller
     {
         public AccountController()
@@ -89,7 +89,8 @@ namespace Multas.Controllers
         //
         // GET: /Account/VerifyCode
         [HttpGet]
-        [AllowAnonymous]
+        [AllowAnonymous] //deixa cair a obrigatoriedade da Autenticação
+        //pq está mais perto do método
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
             // Require that the user has already logged in via username/password or external login

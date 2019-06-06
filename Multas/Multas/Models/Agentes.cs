@@ -31,5 +31,10 @@ namespace Multas.Models
         
         //identifica as multas passadas pelo Agente
         public virtual ICollection<Multas> ListaDasMultas { get; set; }
+
+
+        //adicionar uma 'chave forasteira' para a tabela de autenticação
+        //[Required]
+        public string UserNameId { get; set; }
     }
 }

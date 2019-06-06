@@ -11,12 +11,17 @@ using Multas.Models;
 
 namespace Multas.Controllers
 {
+
+    [Authorize(Roles ="")] // so pessoas autenticadas podem executar estas taferas
     public class AgentesController : Controller{
 
         //Criar Var que representa a BD
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Agentes
+
+        //a anotação seguinte obriga a pelo menos um dos roles
+        [Authorize(Roles = "RecursosHumanos,Agente")] // so os agentes e as pessoas dos recursos humanos acedem a esta listagem
         public ActionResult Index(){
 
 
@@ -24,6 +29,15 @@ namespace Multas.Controllers
             //Instrução feita em LINQ
             //SELECT * FROM Agentes ORDER BY nome
             var listaAgentes = db.Agentes.OrderBy(a => a.Nome).ToList();
+
+            if (!User.IsInRole("RecursosHumanos"))
+            {
+
+                //O utilizador não pertence aos recursos humanos
+                int idAgente = db.Agentes.Where(a=>a.UserNameId == User.Identity.Name).FirstOrDefault().ID;
+                return RedirectToAction("Details", new { id = idAgente});
+                
+            }
             return View(listaAgentes);
         }
 
@@ -55,7 +69,25 @@ namespace Multas.Controllers
                 //return HttpNotFound();
                 return RedirectToAction("Index");
             }
-            return View(agentes);
+
+            ///o Agente foi encontrado
+            ///posso mostrar os seus dados a quem os solicitou?
+            ///sim, se
+            ///     - o utilizador pertence ao role 'recursos humanos' ou
+            ///     - o utilizador pertence ao role 'gestão multas' ou
+            ///     - é o utilizador autenticado
+            
+            if(User.IsInRole("RecursosHumanos") || User.IsInRole("GestorMultas") || agentes.UserNameId == User.Identity.Name)
+            {
+                return View(agentes);
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }         
+
+
+            
         }
 
         // GET: Agentes/Create
@@ -76,6 +108,7 @@ namespace Multas.Controllers
         /// <returns>devolve uma view</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "RecursosHumanos")]
         public ActionResult Create([Bind(Include = "Nome,Esquadra")] Agentes agentes, HttpPostedFileBase fotografia){
 
             /// precisamos de processar a fotografia
